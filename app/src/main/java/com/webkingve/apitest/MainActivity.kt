@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.core.content.ContextCompat
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             var connection: HttpURLConnection? = null
 
             try {
-                val url = URL("https://run.mocky.io/v3/25c305bf-bcf4-45b8-9d66-edd259850fe1")
+                val url = URL("https://run.mocky.io/v3/028ff4e7-45d9-4697-92b5-c8abf8f57d2b")   //https://designer.mocky.io/manage/delete/028ff4e7-45d9-4697-92b5-c8abf8f57d2b/VQ5w6HUzURZehjT1M76cOvwn0H1okHgZe1zu
                 connection = url.openConnection() as HttpURLConnection
                 connection.doInput = true
                 connection.doOutput =true
@@ -83,6 +84,42 @@ class MainActivity : AppCompatActivity() {
             super.onPostExecute(result)
             cancelProgressDialog()
             Log.i("JSON RESPONSE RESULT", result)
+
+            //GET OBJECT
+            val jsonObject = JSONObject(result) //Convert response in JSON OBJECT
+
+            //SINGLE INT
+            val id = jsonObject.optInt("id")   //Accessing to 'id', this is contains in JSON object
+            Log.i("id", "$id")
+
+            //SINGLE STRING
+            val message = jsonObject.optString("message")   //Accessing to 'message', this is contains in JSON object
+            Log.i("Message", message)
+
+            //DETAIL OBJECT
+            val details = jsonObject.optJSONObject("details")
+            val detailFirstName = details.optString("first_name")
+            val detailLastName = details.optString("last_name")
+            Log.i("First name", detailFirstName)
+            Log.i("Last name", detailLastName)
+
+            //LIST ARRAY
+            val fruits = jsonObject.optJSONArray("fruits")   //Accessing to 'fruits', this is contains in JSON object
+            Log.i("Fruits size", "${fruits.length()}")
+            for(item in 0 until fruits.length()){
+                Log.i("Value $item", "${fruits[item]}")
+
+                //Prepare to acces to data
+                val dataItemObject: JSONObject = fruits[item] as JSONObject
+
+                //Get and Print fruit name
+                val name = dataItemObject.optString("name")
+                Log.i("Fruit name", "$name")
+
+                //Get and Print Fruit color
+                val color = dataItemObject.optString("color")
+                Log.i("Fruit color", "$color")
+            }
         }
 
         private fun showProgressDialog(){
