@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.core.content.ContextCompat
+import com.google.gson.Gson
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.DataOutputStream
@@ -101,7 +102,16 @@ class MainActivity : AppCompatActivity() {
             cancelProgressDialog()
             Log.i("JSON RESPONSE RESULT", result)
 
-            //GET OBJECT
+            val responseData = Gson().fromJson(result, ResponseData::class.java)
+            Log.i("Id", "$responseData.id")
+            Log.i("Message", responseData.message)
+            Log.i("Detail First Name", "${responseData.details.first_name}")
+            Log.i("Detail Last Name", "${responseData.details.last_name}")
+            for (item in responseData.fruits.indices){
+                Log.i("Item", "${responseData.fruits[item]}")
+            }
+
+            /*//GET OBJECT
             val jsonObject = JSONObject(result) //Convert response in JSON OBJECT
 
             //SINGLE INT
@@ -135,7 +145,7 @@ class MainActivity : AppCompatActivity() {
                 //Get and Print Fruit color
                 val color = dataItemObject.optString("color")
                 Log.i("Fruit color", "$color")
-            }
+            }*/
         }
 
         private fun showProgressDialog(){
